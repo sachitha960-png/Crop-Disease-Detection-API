@@ -1,0 +1,14 @@
+# Python virtual environment
+venv/
+__pycache__/
+
+# Environment & credentials
+*.json
+*.env
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Build files
+*.log

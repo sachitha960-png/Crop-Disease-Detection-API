@@ -1,0 +1,7 @@
+#uploadSection {
+  transition: all 0.3s ease;
+}
+#uploadSection:hover {
+  background-color: #dcfce7;
+  transform: scale(1.02);
+}

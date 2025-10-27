@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+requests
+python-multipart
+tensorflow
+numpy
+pandas
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+google-cloud-pubsub
+google-cloud-storage
+google-cloud-aiplatform
