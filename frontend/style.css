@@ -1,7 +1,7 @@
-#uploadSection {
-  transition: all 0.3s ease;
+button, label {
+  transition: all 0.2s ease-in-out;
 }
-#uploadSection:hover {
-  background-color: #dcfce7;
-  transform: scale(1.02);
+
+button:hover, label:hover {
+  transform: translateY(-2px);
 }

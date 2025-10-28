@@ -1,39 +1,40 @@
 const backendURL = "https://crop-disease-service-46543744271.us-central1.run.app/predict";
 
 const imageInput = document.getElementById("imageInput");
-const predictBtn = document.getElementById("predictBtn");
+const analyzeBtn = document.getElementById("analyzeBtn");
 const resultDiv = document.getElementById("result");
-const predictionText = document.getElementById("predictionText");
-const uploadSection = document.getElementById("uploadSection");
+const predictionEl = document.getElementById("prediction");
+const confidenceEl = document.getElementById("confidence");
+const previewImage = document.getElementById("previewImage");
 
-// Show preview of uploaded image
+let selectedFile = null;
+
+// handle file upload
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
   if (!file) return;
 
-  const oldPreview = document.getElementById("previewImage");
-  if (oldPreview) oldPreview.remove();
-
-  const img = document.createElement("img");
-  img.id = "previewImage";
-  img.src = URL.createObjectURL(file);
-  img.className = "mt-4 max-h-48 rounded-xl";
-  uploadSection.appendChild(img);
+  selectedFile = file;
+  const imgURL = URL.createObjectURL(file);
+  previewImage.src = imgURL;
+  resultDiv.classList.add("hidden");
+  analyzeBtn.disabled = false;
 });
 
-// Predict disease
-predictBtn.addEventListener("click", async () => {
-  const file = imageInput.files[0];
-  if (!file) {
+// handle analyze button click
+analyzeBtn.addEventListener("click", async () => {
+  if (!selectedFile) {
     alert("Please upload an image first!");
     return;
   }
 
-  const formData = new FormData();
-  formData.append("file", file);
-
-  predictionText.innerText = "⏳ Predicting...";
+  analyzeBtn.disabled = true;
+  predictionEl.textContent = "Analyzing...";
+  confidenceEl.textContent = "";
   resultDiv.classList.remove("hidden");
+
+  const formData = new FormData();
+  formData.append("file", selectedFile);
 
   try {
     const response = await fetch(backendURL, {
@@ -47,13 +48,17 @@ predictBtn.addEventListener("click", async () => {
     if (data && data.predictions) {
       const label = data.predictions[0].displayNames[0];
       const confidence = (data.predictions[0].confidences[0] * 100).toFixed(2);
-      predictionText.innerHTML = `🌱 <strong>${label}</strong> <br> Confidence: ${confidence}%`;
+      predictionEl.textContent = `Prediction: ${label}`;
+      confidenceEl.textContent = `Confidence: ${confidence}%`;
     } else {
-      predictionText.innerText = "❌ Unable to get prediction. Check console for details.";
+      predictionEl.textContent = "❌ Unable to get prediction";
+      confidenceEl.textContent = "";
     }
-  } catch (error) {
-    predictionText.innerText = "⚠️ Error connecting to backend!";
-    console.error(error);
+  } catch (err) {
+    predictionEl.textContent = "⚠️ Error connecting to backend!";
+    confidenceEl.textContent = "";
+    console.error(err);
+  } finally {
+    analyzeBtn.disabled = false;
   }
 });
-
